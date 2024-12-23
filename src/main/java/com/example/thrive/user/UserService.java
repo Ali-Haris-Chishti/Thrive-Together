@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -34,7 +35,7 @@ public class UserService {
         userModel.setPassword(bCryptPasswordEncoder.encode(userModel.getPassword()));
         try {
             userModel = userRepository.save(userModel);
-            return ResponseEntity.ok().body(jwtService.generateToken(userModel.getUsername()));
+            return ResponseEntity.ok().body(jwtService.generateToken(userModel.getUsername(), Collections.singletonList(userModel.getUserRole().toString())));
         }
         catch (Exception e) {
             return ResponseEntity.status(409).body(e.getMessage());
@@ -47,7 +48,7 @@ public class UserService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         if (authentication.isAuthenticated()) {
-            return ResponseEntity.ok().body(jwtService.generateToken(username));
+            return ResponseEntity.ok().body(jwtService.generateToken(username, Collections.singletonList(userRepository.findUserRoleByUsername(username).toString())));
         }
         return ResponseEntity.status(401).body("Invalid username or password");
     }

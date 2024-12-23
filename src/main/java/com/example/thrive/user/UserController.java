@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +38,9 @@ public class UserController {
         return userService.validateJwtToken(request.getHeader(HttpHeaders.AUTHORIZATION).substring(7));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/get-all")
     public ResponseEntity<List<UserModel>> getAllUsers() {
-
+        return ResponseEntity.ok(null);
     }
 }
